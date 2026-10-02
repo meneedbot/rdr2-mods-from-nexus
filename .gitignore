@@ -1,0 +1,13 @@
+# Local secrets - NEVER commit
+secrets.json
+*.secret
+.env
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+Thumbs.db
+desktop.ini
+.DS_Store
