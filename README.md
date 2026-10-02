@@ -32,9 +32,38 @@ Requirements: Python 3 only (standard library, no pip installs).
 |---|---|
 | `index.html` | The site (static, works offline, contains **no secrets**) |
 | `server.py` | Local server: serves the page, talks to Nexus and GitHub |
+| `installer.py` | Extracts a downloaded mod archive into the game folder, reversibly |
 | `catalog.json` | Curated mod catalog |
 | `secrets.json` | **Local only.** API keys. Git-ignored, never committed |
-| `.gitignore` | Keeps `secrets.json` and caches out of git |
+| `.gitignore` | Keeps `secrets.json`, caches and `installs/` out of git |
+
+## Installing a mod
+
+Nexus requires a logged-in browser session for file downloads, so the **archive
+has to be on disk first** (download it from the Files tab on the mod's Nexus
+page). Once you have the `.zip` or `.rar`, this installs it:
+
+```bash
+python installer.py dry-run "C:\path\to\Mod.zip"   # preview, writes nothing
+python installer.py install    "C:\path\to\Mod.zip" # do it
+python installer.py list                           # what has been installed
+python installer.py undo      20261002-124818       # revert one install
+```
+
+What it does:
+
+* Strips the single wrapper folder most mod zips have, so files land flat in
+  the game folder, which is what RDR2 mods expect
+* Skips `readme.txt`, `mods.txt`, licence files and other junk
+* Refuses `..` and absolute paths, so a malicious archive cannot write outside
+  the game folder
+* **Copies any file it is about to overwrite into `installs/<id>/backup/`**, then
+  records a manifest, so `undo` puts the original back and removes what it added
+* Deletes only files it added itself, never anything else
+
+Default game folder is `E:\rdr2\Red Dead Redemption 2`; override with `--game`.
+
+`.rar` works via 7-Zip, UnRAR or WinRAR's console tool if one is installed.
 
 ## Why there is a server at all
 
