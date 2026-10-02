@@ -7,6 +7,9 @@ secrets.json
 __pycache__/
 *.pyc
 
+# Installer state (backups + manifests)
+installs/
+
 # OS
 Thumbs.db
 desktop.ini
